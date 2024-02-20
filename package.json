@@ -1,0 +1,24 @@
+{
+  "name": "contracts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "build/contracts/src/index.js",
+  "types": "build/contracts/src/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "buildw": "tsc --watch",
+    "coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
+    "deploy": "node build/contracts/src/deploy/deploy-zkapp.js",
+    "format": "prettier --write --ignore-unknown **/*",
+    "test": "node --experimental-vm-modules ../node_modules/jest/bin/jest.js",
+    "testw": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
+    "lint": "npx eslint src/* --fix"
+  },
+  "lint-staged": {
+    "**/*": [
+      "eslint src/* --fix",
+      "prettier --write --ignore-unknown"
+    ]
+  }
+}
