@@ -5,4 +5,14 @@ import {
   UserSession,
 } from './mvsV1.js';
 
-export { MVSContract, MVSMerkleWitness, UserData, UserSession };
+import { MVSContractV2, MVSMerkleWitnessV2, MVSProofGen } from './mvsProofs.js';
+
+export {
+  MVSContract,
+  MVSMerkleWitness,
+  UserData,
+  UserSession,
+  MVSContractV2,
+  MVSMerkleWitnessV2,
+  MVSProofGen,
+};

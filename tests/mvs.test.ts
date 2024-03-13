@@ -12,7 +12,7 @@ import {
   MVSMerkleWitness,
   UserData,
   MVSContract,
-} from '../build/contracts/src';
+} from '../build/src';
 
 describe('MVS Test', () => {
   const merkleHeight = 20;
