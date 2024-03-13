@@ -14,7 +14,7 @@ import * as fs from 'fs';
 let proofsEnabled = false;
 const merkleHeight = 20;
 
-describe('Secret Message Test', () => {
+describe('MVS PROOF TESTS', () => {
   let controllerAccount: PublicKey,
     controllerKey: PrivateKey,
     zkAppAddress: PublicKey,
