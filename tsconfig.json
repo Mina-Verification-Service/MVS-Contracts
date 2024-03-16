@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
+    "target": "es2020",
     "module": "es2022",
     "lib": [
       "dom",
       "esnext"
     ],
     "outDir": "./build",
-    "target": "es2020",
     "rootDir": ".",
     "strict": true,
     "strictPropertyInitialization": false, // to enable generic constructors, e.g. on CircuitValue
@@ -21,13 +21,9 @@
     "sourceMap": true,
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
+    "useDefineForClassFields": false,
   },
   "include": [
     "./src"
   ],
-  "ts-node": {
-    "require": [
-      "tsconfig-paths/register"
-    ]
-  }
 }

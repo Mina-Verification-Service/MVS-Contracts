@@ -11,7 +11,7 @@
     "coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
     "deploy": "node build/contracts/src/deploy/deploy-zkapp.js",
     "format": "prettier --write --ignore-unknown **/*",
-    "test": "node --experimental-vm-modules ../node_modules/jest/bin/jest.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "testw": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
     "lint": "npx eslint src/* --fix"
   },
@@ -46,7 +46,7 @@
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
     "eslint-plugin-o1js": "^0.4.0",
-    "jest": "29.7.0",
+    "jest": "^29.7.0",
     "lint-staged": "^11.0.1",
     "pm2": "^5.3.0",
     "prettier": "^2.3.2",
