@@ -3,7 +3,6 @@ import {
   Experimental,
   MerkleWitness,
   Bool,
-  JsonProof,
   CircuitString,
   SmartContract,
   State,
@@ -11,7 +10,7 @@ import {
   PublicKey,
   method,
 } from 'o1js';
-import { Schema } from 'zkdb';
+import { Schema } from './serializer';
 
 // Height of the Merkle Tree
 const merkleHeight = 20;
@@ -27,7 +26,6 @@ export const MVSProofGen = Experimental.ZkProgram({
     getProof: {
       // private inputs the, the db commitment and ml check result.
       privateInputs: [Field, Bool],
-
       method(
         publicInput: MVSMerkleWitnessV2,
         commitmentRoot: Field,
@@ -37,7 +35,7 @@ export const MVSProofGen = Experimental.ZkProgram({
         let emptyRoot = publicInput.calculateRoot(Field(0));
         commitmentRoot.assertEquals(emptyRoot);
         // check that result is true from ml checker
-        result.assertEquals(true);
+        result.assertEquals(Bool(true));
       },
     },
   },
@@ -45,7 +43,7 @@ export const MVSProofGen = Experimental.ZkProgram({
 
 export class ProofRecord extends Schema({
   userId: CircuitString,
-  proof: Object as unknown as JsonProof,
+  proof: [Field],
 }) {
   // Deserialize the document from a Uint8Array
   static deserialize(data: Uint8Array): ProofRecord {
@@ -57,14 +55,13 @@ export class ProofRecord extends Schema({
       userId: this.userId.toString(),
     };
   }
-  json(): { userId: string; proof: JsonProof } {
+  json(): { userId: string; proof: Field[] } {
     return {
       userId: this.userId.toString(),
       proof: this.proof,
     };
   }
 }
-
 export class MVSContractV2 extends SmartContract {
   @state(Field) storageRoot = State<Field>();
   @state(Field) numOfUsers = State<Field>();
