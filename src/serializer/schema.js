@@ -1,4 +1,4 @@
-import { Struct, Poseidon } from 'o1js';
+import { Struct, Poseidon, Field } from 'o1js';
 import { BSON } from 'bson';
 export const Schema = (type) => {
   class Document extends Struct(type) {
@@ -40,6 +40,17 @@ export const Schema = (type) => {
       return Poseidon.hash(Document.toFields(this));
     }
   }
+
+  function iter_proof(object) {
+    const result = [];
+    const objKeys = Object.keys(object);
+    for (let i = 0; i < objKeys.length; i += 1) {
+      const key = objKeys[i];
+      result.push(Field.from(object[key]));
+    }
+    return result;
+  }
+
   // Deserialize the document from a Uint8Array
   Document.decode = (doc) => {
     const entries = Object.entries(type);
@@ -48,6 +59,7 @@ export const Schema = (type) => {
     for (let i = 0; i < entries.length; i += 1) {
       const [key, value] = entries[i];
       const anyValue = value;
+      const objKeys = Object.keys(docObj[key]);
       if (typeof anyValue.fromBase58 !== 'undefined') {
         result[key] = anyValue.fromBase58(docObj[key]);
       } else if (typeof anyValue.fromJSON !== 'undefined') {
@@ -56,6 +68,8 @@ export const Schema = (type) => {
         result[key] = anyValue.from(docObj[key]);
       } else if (typeof anyValue.fromString !== 'undefined') {
         result[key] = anyValue.fromString(docObj[key]);
+      } else if (objKeys.length > 1) {
+        result[key] = iter_proof(docObj[key], anyValue);
       } else {
         throw new Error(`Cannot deserialize ${key}`);
       }
