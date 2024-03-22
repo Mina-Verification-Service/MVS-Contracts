@@ -12,7 +12,6 @@ import {
   Bool,
   verify,
   CircuitString,
-  Provable,
   JsonProof,
   Encoding,
 } from 'o1js';
