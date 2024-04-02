@@ -116,7 +116,6 @@ describe('MVS PROOF TESTS', () => {
       Bool(true)
     );
     const ok = await verify(userProof.toJSON(), verificationKey);
-    console.log(userProof.toJSON());
     expect(ok).toBeTruthy();
   });
 

@@ -9,6 +9,8 @@ import {
   state,
   PublicKey,
   method,
+  Signature,
+  SelfProof,
 } from 'o1js';
 import { Schema } from './serializer';
 
@@ -43,6 +45,7 @@ export const MVSProofGen = Experimental.ZkProgram({
 
 export class ProofRecord extends Schema({
   userId: CircuitString,
+  userPubKey: PublicKey,
   proof: [Field],
 }) {
   // Deserialize the document from a Uint8Array
@@ -55,13 +58,15 @@ export class ProofRecord extends Schema({
       userId: this.userId.toString(),
     };
   }
-  json(): { userId: string; proof: Field[] } {
+  json(): { userId: string; userPubKey: string; proof: Field[] } {
     return {
       userId: this.userId.toString(),
+      userPubKey: this.userPubKey.toBase58(),
       proof: this.proof,
     };
   }
 }
+
 export class MVSContractV2 extends SmartContract {
   @state(Field) storageRoot = State<Field>();
   @state(Field) numOfUsers = State<Field>();
@@ -78,6 +83,7 @@ export class MVSContractV2 extends SmartContract {
     this.mvsController.set(this.sender);
   }
 
+  // can only be called by controller
   @method setZkdbRoot(storageRoot: Field) {
     // get states
     const initialized = this.initialized.getAndAssertEquals();
@@ -92,7 +98,8 @@ export class MVSContractV2 extends SmartContract {
     this.initialized.set(Bool(true));
   }
 
-  @method addUser(record: Field, witness: MVSMerkleWitnessV2) {
+  // can only be called by controller
+  @method addProofRecord(record: Field, witness: MVSMerkleWitnessV2) {
     // get contract states
     const controller = this.mvsController.getAndAssertEquals();
     const initialized = this.initialized.getAndAssertEquals();
@@ -111,5 +118,28 @@ export class MVSContractV2 extends SmartContract {
     // update root and counter
     this.storageRoot.set(newRoot);
     this.numOfUsers.set(noOfUsers.add(1));
+  }
+
+  // can be called by anybody
+  @method verifyProofRecord(
+    record: Field,
+    witness: MVSMerkleWitnessV2,
+    signature: Signature,
+    proof: SelfProof<MVSMerkleWitnessV2, void>,
+    proofAsFields: [Field],
+    userPubKey: PublicKey
+  ) {
+    // get storage
+    const storageRoot = this.storageRoot.getAndAssertEquals();
+    // calculate root
+    const userRoot = witness.calculateRoot(record);
+    // ensure that storage root and user root are the same
+    storageRoot.assertEquals(userRoot);
+    // check if proof signature is valid
+    const validSignature = signature.verify(userPubKey, proofAsFields);
+    // Check that the signature is valid
+    validSignature.assertTrue();
+    // then verify proof
+    proof.verify();
   }
 }
